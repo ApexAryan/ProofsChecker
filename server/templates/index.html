@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Proof Assistant</title>
+</head>
+<body>
+    <h1>Interactive Proof Assistant</h1>
+    <form id="proofForm" method="POST" action="/check_proof">
+        <label for="proof_type">Proof Type:</label>
+        <select id="proof_type" name="proof_type">
+            <option value="direct">Direct Proof</option>
+            <option value="contraposition">Proof by Contraposition</option>
+            <option value="contradiction">Proof by Contradiction</option>
+        </select>
+
+        <label for="statement">Statement:</label>
+        <textarea id="statement" name="statement" rows="4"></textarea>
+
+        <label for="assumption">Assumption:</label>
+        <input type="text" id="assumption" name="assumption">
+
+        <label for="conclusion">Conclusion:</label>
+        <input type="text" id="conclusion" name="conclusion">
+
+        <label for="contradiction" id="contradiction_label" style="display: none;">Contradiction:</label>
+        <input type="text" id="contradiction" name="contradiction" style="display: none;">
+
+        <button type="submit">Submit Proof</button>
+    </form>
+
+    <div id="result"></div>
+
+    <script>
+        document.getElementById("proofForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            var formData = new FormData(this);  // Collect form data
+            fetch('/check_proof', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                var resultDiv = document.getElementById("result");
+                if (data.result) {
+                    resultDiv.textContent = "Proof is valid!";
+                    resultDiv.style.color = "green";
+                } else {
+                    resultDiv.textContent = "Proof is invalid!";
+                    resultDiv.style.color = "red";
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
